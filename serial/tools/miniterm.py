@@ -274,7 +274,7 @@ class Colorize(Transform):
 
 
 class TimePrefix(Transform):
-    """Prefix line with date and time (does not work defaults, nocontrol... anything that removes controls)"""
+    """Prefix line with date and time (does not work with default, nocontrol... anything that removes controls)"""
 
     def __init__(self, color='cyan'):
         self.__color = color
