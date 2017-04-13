@@ -710,3 +710,12 @@ Bugfixes (posix):
 Bugfixes (win32):
 
 - [#194] spurious write fails with ERROR_SUCCESS
+
+
+Version x.x.x   2017-xx-xx
+--------------------------
+Improvements:
+
+- Add a log filter transformation to log session to file.
+- Add a time filter transformation to prefix new lines with current date and
+  time.
