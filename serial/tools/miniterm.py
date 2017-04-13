@@ -8,8 +8,10 @@
 # SPDX-License-Identifier:    BSD-3-Clause
 
 import codecs
+import datetime
 import os
 import sys
+import termcolor
 import threading
 
 import serial
@@ -271,6 +273,41 @@ class Colorize(Transform):
         return self.echo_color + text
 
 
+class TimePrefix(Transform):
+    """Prefix line with date and time (does not work defaults, nocontrol... anything that removes controls)"""
+
+    def __init__(self, color='cyan'):
+        self.__color = color
+
+    def rx(self, text):
+        # Get current timestamp.
+        now = datetime.datetime.now()
+        # Convert it to user readable date and time.
+        time_str = termcolor.colored(now.strftime('[%Y-%M-%d %X] '),
+                                     self.__color)
+        # We want the string at the beginning of the line, no matter what is
+        # the EOL and no matter the chars we receive in the text.
+        # If we add time to both \r and \n, we might add it twice. If we
+        # receive a \r\n, the time on the current line will be overriden
+        # before getting a new time on a new line. We don't want that.
+        # BUG: if eol is crlf and we receive a \r alone before a \n,
+        #      the current line time is updated. We don't want that if
+        #      the real data is \r\n...
+        # FIXME: the receive thread or something should buffer the \r when
+        #        eol is crlf to wait for the next char (with a timeout).
+        #        Then, it should send both \r and the next char received.
+        #        That way, we would never override the current line time.
+        # `str in str` found to be faster than re matches.
+        if '\r\n' in text:
+            text = text.replace('\r\n', '\r\n{}'.format(time_str))
+        else:
+            text = text.replace('\r', '\r{}'.format(time_str))
+            text = text.replace('\n', '\n{}'.format(time_str))
+        return text
+
+    echo = rx
+
+
 class Log(Transform):
     """Log session to file"""
 
@@ -320,6 +357,7 @@ TRANSFORMATIONS = {
     'printable': Printable,
     'colorize': Colorize,
     'debug': DebugIO,
+    'time' : TimePrefix,
     'log' : Log,
 }
 
