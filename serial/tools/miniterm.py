@@ -271,6 +271,24 @@ class Colorize(Transform):
         return self.echo_color + text
 
 
+class Log(Transform):
+    """Log session to file"""
+
+    def __init__(self, filename='session.log'):
+        self.__f = open(filename, 'ab')
+
+    def __del__(self):
+        # This is unsafe: __f reference can be gone already.
+        self.__f.close()
+
+    def rx(self, text):
+        self.__f.write(text)
+        self.__f.flush()
+        return text
+
+    echo = rx
+
+
 class DebugIO(Transform):
     """Print what is sent and received"""
 
@@ -302,6 +320,7 @@ TRANSFORMATIONS = {
     'printable': Printable,
     'colorize': Colorize,
     'debug': DebugIO,
+    'log' : Log,
 }
 
 
