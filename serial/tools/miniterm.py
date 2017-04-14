@@ -201,6 +201,25 @@ class ParamTransform(Transform):
         pass
 
 
+class MapTransform(ParamTransform):
+    """remaps CR/LF for input/output"""
+
+    remap = {
+        'crlf'   : ('\r', '\n'),
+        'crcrlf' : ('\r', '\r\n'),
+        'lfcr'   : ('\n', '\r'),
+        'lfcrlf' : ('\n', '\r\n'),
+        'lfcrlf2': ('\n\r', '\n')
+    }
+    prompt = """---    Available remaps are:
+---       crlf   : CR --> LF
+---       crcrlf : CR --> CRLF
+---       lfcr   : LF --> CR
+---       lfcrlf : LF --> CRLF
+---       lfcrlf2: LFCR --> LF
+"""
+
+
 class CRLF(Transform):
     """ENTER sends CR+LF"""
 
