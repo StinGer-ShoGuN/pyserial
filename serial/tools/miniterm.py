@@ -283,7 +283,7 @@ class Colorize(Transform):
         return self.echo_color + text + colorama.Fore.RESET
 
 
-class TimePrefix(Transform):
+class TimePrefix(ParamTransform):
     """Prefix line with date and time (does not work with default, nocontrol... anything that removes controls)"""
 
     def __init__(self, color=colorama.Fore.CYAN):
@@ -318,8 +318,39 @@ class TimePrefix(Transform):
 
     echo = rx
 
+    @staticmethod
+    def prompt():
+        prompt = """--- time filter configuration
+---    Enter color of the date and time displayed.
+---    Available colors are: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE,
+---                          NONE
+---    Color: """
+        return prompt
 
-class Log(Transform):
+    def params_set(self, params_str):
+        col_d = {
+            'black'  : colorama.Fore.BLACK,
+            'red'    : colorama.Fore.RED,
+            'green'  : colorama.Fore.GREEN,
+            'yellow' : colorama.Fore.YELLOW,
+            'blue'   : colorama.Fore.BLUE,
+            'magenta': colorama.Fore.MAGENTA,
+            'cyan'   : colorama.Fore.CYAN,
+            'white'  : colorama.Fore.WHITE,
+            'none'   : ''
+        }
+        # Strip out any spaces and ensure lower case on input.
+        if params_str:
+            col = params_str.split()[0].lower()
+            if col in col_d.keys():
+                self.__color = col_d[col]
+        else:
+            col ='none'
+            self.__color = col_d[col]
+        return col
+
+
+class Log(ParamTransform):
     """Log session to file"""
 
     def __init__(self, filename='session.log'):
