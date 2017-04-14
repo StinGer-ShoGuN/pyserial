@@ -191,6 +191,16 @@ class Transform(object):
         return text
 
 
+class ParamTransform(Transform):
+    """do-nothing: forward all data unchanged"""
+    def params_set(self, param_str):
+        return ""
+
+    @staticmethod
+    def prompt():
+        pass
+
+
 class CRLF(Transform):
     """ENTER sends CR+LF"""
 
