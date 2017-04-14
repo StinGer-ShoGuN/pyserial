@@ -360,6 +360,12 @@ class Log(ParamTransform):
         # This is unsafe: __f reference can be gone already.
         self.__f.close()
 
+    @staticmethod
+    def prompt():
+        prompt = """--- log filter configuration
+---    Enter file path: """
+        return prompt
+
     def rx(self, text):
         self.__f.write(text)
         self.__f.flush()
@@ -367,6 +373,18 @@ class Log(ParamTransform):
 
     echo = rx
 
+    def params_set(self, params_str):
+        filename = params_str or "session.log"
+        try:
+            self.__f = open(filename, 'ab')
+        except PermissionError:
+            sys.stderr.write("--- Can't open file to log to.\n")
+            sys.stderr.flush()
+            filename = os.path.join(os.path.expanduser("~"), os.path.basename(filename))
+            self.__f = open(filename, 'ab')
+            sys.stderr.write("--- Logging to user directory.\n")
+            sys.stderr.flush()
+        return filename
 
 class DebugIO(Transform):
     """Print what is sent and received"""
