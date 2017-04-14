@@ -469,6 +469,13 @@ class Miniterm(object):
                                                              for f in self.filters]
         self.tx_transformations = [t() for t in transformations]
         self.rx_transformations = list(reversed(self.tx_transformations))
+        with self.console:
+            for f in self.tx_transformations:
+                if isinstance(f, ParamTransform):
+                    sys.stderr.write(f.prompt())
+                    f_params = sys.stdin.readline().rstrip('\r\n')
+                    retconf = f.params_set(f_params)
+                    sys.stderr.write('--- filter configured with {}\n'.format(retconf))
 
     def set_rx_encoding(self, encoding, errors='replace'):
         """set encoding for received data"""
