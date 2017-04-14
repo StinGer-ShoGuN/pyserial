@@ -433,6 +433,35 @@ class OMap(MapTransform):
         return "{} --> {}".format(remap[0], remap[1])
 
 
+class IMap(MapTransform):
+    """Remap input chars from a given map table"""
+
+    @staticmethod
+    def prompt():
+        prompt = """--- imap filter configuration
+{}
+---    Enter desired remap: """.format(MapTransform.prompt)
+        return prompt
+
+    def rx(self, text):
+        return text.replace(self.__remap[0], self.__remap[1])
+
+    echo = rx
+
+    def params_set(self, params_str):
+        # Strip out any spaces and ensure lower case on input.
+        if params_str:
+            remap = params_str.split()[0].lower()
+            if remap in self.__class__.remap.keys():
+                self.__remap = self.__class__.remap[remap]
+        else:
+            remap = ('', '')
+            self.__remap = remap
+        remap = (self.__remap[0].replace('\r', 'CR').replace('\n', 'LF'),
+                 self.__remap[1].replace('\r', 'CR').replace('\n', 'LF'))
+        return "{} --> {}".format(remap[0], remap[1])
+
+
 class DebugIO(Transform):
     """Print what is sent and received"""
 
@@ -467,6 +496,7 @@ TRANSFORMATIONS = {
     'time' : TimePrefix,
     'log' : Log,
     'omap' : OMap,
+    'imap' : IMap,
 }
 
 
