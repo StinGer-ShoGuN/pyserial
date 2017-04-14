@@ -11,7 +11,7 @@ import codecs
 import datetime
 import os
 import sys
-import termcolor
+import colorama
 import threading
 
 import serial
@@ -276,15 +276,16 @@ class Colorize(Transform):
 class TimePrefix(Transform):
     """Prefix line with date and time (does not work with default, nocontrol... anything that removes controls)"""
 
-    def __init__(self, color='cyan'):
+    def __init__(self, color=colorama.Fore.CYAN):
         self.__color = color
 
     def rx(self, text):
         # Get current timestamp.
         now = datetime.datetime.now()
         # Convert it to user readable date and time.
-        time_str = termcolor.colored(now.strftime('[%Y-%M-%d %X] '),
-                                     self.__color)
+        time_str = self.__color\
+                   + now.strftime('[%Y-%M-%d %X] ')\
+                   + colorama.Fore.RESET
         # We want the string at the beginning of the line, no matter what is
         # the EOL and no matter the chars we receive in the text.
         # If we add time to both \r and \n, we might add it twice. If we
@@ -762,6 +763,9 @@ def main(default_port=None, default_baudrate=9600, default_rts=None, default_dtr
     """Command line tool, entry point"""
 
     import argparse
+
+    # Init colorama
+    colorama.init(autoreset=True)
 
     parser = argparse.ArgumentParser(
         description="Miniterm - A simple terminal program for the serial port.")
