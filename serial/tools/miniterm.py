@@ -263,14 +263,14 @@ class Colorize(Transform):
 
     def __init__(self):
         # XXX make it configurable, use colorama?
-        self.input_color = '\x1b[37m'
-        self.echo_color = '\x1b[31m'
+        self.input_color = colorama.Fore.WHITE
+        self.echo_color = colorama.Fore.RED
 
     def rx(self, text):
-        return self.input_color + text
+        return self.input_color + text + colorama.Fore.RESET
 
     def echo(self, text):
-        return self.echo_color + text
+        return self.echo_color + text + colorama.Fore.RESET
 
 
 class TimePrefix(Transform):
