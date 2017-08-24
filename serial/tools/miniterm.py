@@ -307,8 +307,9 @@ class Colorize(Transform):
 class TimePrefix(ParamTransform):
     """Prefix line with date and time (does not work with default, nocontrol... anything that removes controls)"""
 
-    def __init__(self, color=colorama.Fore.CYAN):
+    def __init__(self, color=colorama.Fore.CYAN, eol='crlf'):
         self.__color = color
+        self.__eol = self.set_eol(eol)
 
     def rx(self, text):
         # Get current timestamp.
@@ -369,6 +370,17 @@ class TimePrefix(ParamTransform):
             col ='none'
             self.__color = col_d[col]
         return col
+
+    def set_eol(self, eol):
+        """Sets the EOL currently in use in miniterm."""
+        if eol == 'cr':
+            self.__eol = '\r'
+        elif eol == 'lf':
+            self.__eol = '\n'
+        elif eol == 'crlf':
+            self.__eol = '\r\n'
+        else:
+            self.__eol = '\n'
 
 
 class Log(ParamTransform):
