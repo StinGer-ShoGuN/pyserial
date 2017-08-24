@@ -388,7 +388,7 @@ class Log(ParamTransform):
         return prompt
 
     def rx(self, text):
-        self.__f.write(text)
+        self.__f.write(bytes(text, sys.getdefaultencoding()))
         self.__f.flush()
         return text
 
