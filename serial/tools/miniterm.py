@@ -310,6 +310,7 @@ class TimePrefix(ParamTransform):
     def __init__(self, color=colorama.Fore.CYAN, eol='crlf'):
         self.__color = color
         self.__eol = self.set_eol(eol)
+        self.__buffer = ''
 
     def rx(self, text):
         # Get current timestamp.
@@ -318,24 +319,19 @@ class TimePrefix(ParamTransform):
         time_str = self.__color\
                    + now.strftime('[%Y-%m-%d %X] ')\
                    + colorama.Fore.RESET
-        # We want the string at the beginning of the line, no matter what is
-        # the EOL and no matter the chars we receive in the text.
-        # If we add time to both \r and \n, we might add it twice. If we
-        # receive a \r\n, the time on the current line will be overriden
-        # before getting a new time on a new line. We don't want that.
-        # BUG: if eol is crlf and we receive a \r alone before a \n,
-        #      the current line time is updated. We don't want that if
-        #      the real data is \r\n...
-        # FIXME: the receive thread or something should buffer the \r when
-        #        eol is crlf to wait for the next char (with a timeout).
-        #        Then, it should send both \r and the next char received.
-        #        That way, we would never override the current line time.
-        # `str in str` found to be faster than re matches.
-        if '\r\n' in text:
-            text = text.replace('\r\n', '\r\n{}'.format(time_str))
-        else:
-            text = text.replace('\r', '\r{}'.format(time_str))
-            text = text.replace('\n', '\n{}'.format(time_str))
+        # If we're receiving half of the EOL, buffer it for further print.
+        if text.endswith('\r') and self.__eol == '\r\n':
+            self.__buffer = text
+            return ''
+        # Append any buffered output.
+        text = self.__buffer + text
+        # Empty buffer.
+        self.__buffer = ''
+        # Insert time.
+        text = text.replace(self.__eol, '{}{}'.format(self.__eol, time_str))
+        # Maybe there is a single carriage return to re-write the current line.
+        # So rewrite time.
+        text = text.replace('\r', '\r{}'.format(time_str))
         return text
 
     echo = rx
