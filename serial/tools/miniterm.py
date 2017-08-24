@@ -213,11 +213,11 @@ class MapTransform(ParamTransform):
         'lfcrlf2': ('\n\r', '\n')
     }
     prompt = """---    Available remaps are:
----       crlf   : CR --> LF
----       crcrlf : CR --> CRLF
----       lfcr   : LF --> CR
----       lfcrlf : LF --> CRLF
+---       crlf   : CR   --> LF
 ---       crlfcr : CRLF --> CR
+---       crcrlf : CR   --> CRLF
+---       lfcr   : LF   --> CR
+---       lfcrlf : LF   --> CRLF
 ---       lfcrlf2: LFCR --> LF
 """
 
