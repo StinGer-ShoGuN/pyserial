@@ -313,7 +313,7 @@ class TimePrefix(ParamTransform):
         now = datetime.datetime.now()
         # Convert it to user readable date and time.
         time_str = self.__color\
-                   + now.strftime('[%Y-%M-%d %X] ')\
+                   + now.strftime('[%Y-%m-%d %X] ')\
                    + colorama.Fore.RESET
         # We want the string at the beginning of the line, no matter what is
         # the EOL and no matter the chars we receive in the text.
