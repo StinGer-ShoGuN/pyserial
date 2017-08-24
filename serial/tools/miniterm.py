@@ -612,6 +612,8 @@ class Miniterm(object):
         self.rx_transformations = list(reversed(self.tx_transformations))
         with self.console:
             for f in self.tx_transformations:
+                if isinstance(f, TimePrefix):
+                    f.set_eol(self.eol)
                 if isinstance(f, ParamTransform):
                     sys.stderr.write(f.prompt())
                     f_params = sys.stdin.readline().rstrip('\r\n')
