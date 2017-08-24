@@ -206,6 +206,7 @@ class MapTransform(ParamTransform):
 
     remap = {
         'crlf'   : ('\r', '\n'),
+        'crlfcr' : ('\r\n', '\r'),
         'crcrlf' : ('\r', '\r\n'),
         'lfcr'   : ('\n', '\r'),
         'lfcrlf' : ('\n', '\r\n'),
@@ -216,6 +217,7 @@ class MapTransform(ParamTransform):
 ---       crcrlf : CR --> CRLF
 ---       lfcr   : LF --> CR
 ---       lfcrlf : LF --> CRLF
+---       crlfcr : CRLF --> CR
 ---       lfcrlf2: LFCR --> LF
 """
 
